@@ -88,14 +88,22 @@
 #define TEMP_BED_PIN                          14  // Analog Input
 
 //
-// Heaters / Fans
+// Heaters
 //
 #define HEATER_0_PIN                          11
 #define HEATER_1_PIN                          10
 #define HEATER_BED_PIN                         8
 
-#define FAN_PIN                                9
-#define FAN2_PIN                               5  // Normally this would be a servo pin
+//
+// Fans
+//
+#if ENABLED(TitanExtruder)
+  #define FAN_PIN             5
+  #define FAN2_PIN            9
+#else
+  #define FAN_PIN             9
+  #define FAN2_PIN            5
+#endif
 
 //#define NUM_RUNOUT_SENSORS                   0
 #define FIL_RUNOUT_PIN                        15
