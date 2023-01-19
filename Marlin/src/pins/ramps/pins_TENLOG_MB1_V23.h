@@ -105,13 +105,14 @@
   #define FAN2_PIN            5
 #endif
 
-//#define NUM_RUNOUT_SENSORS                   0
 #define FIL_RUNOUT_PIN                        15
 //#define FIL_RUNOUT2_PIN                     21
 
 //
 // PSU and Powerloss Recovery
 //
+#define POWER_LOSS_PIN 32
+#define POWER_LOSS_STATE HIGH
 #if ENABLED(PSU_CONTROL)
   #define PS_ON_PIN                           40  // The M80/M81 PSU pin for boards v2.1-2.3
 #endif
