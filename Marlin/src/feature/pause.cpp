@@ -462,17 +462,17 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
   // If axes don't need to home then the nozzle can park
   if (do_park) nozzle.park(0, park_point); // Park the nozzle by doing a Minimum Z Raise followed by an XY Move
 
-  #if ENABLED(DUAL_X_CARRIAGE)
-    const int8_t saved_ext        = active_extruder;
-    const bool saved_ext_dup_mode = extruder_duplication_enabled;
-    set_duplication_enabled(false, DXC_ext);
-  #endif
+  // #if ENABLED(DUAL_X_CARRIAGE)
+  //   const int8_t saved_ext        = active_extruder;
+  //   const bool saved_ext_dup_mode = extruder_duplication_enabled;
+  //   set_duplication_enabled(false, DXC_ext);
+  // #endif
 
   // Unload the filament, if specified
   if (unload_length)
     unload_filament(unload_length, show_lcd, PAUSE_MODE_CHANGE_FILAMENT);
 
-  TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
+  // TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
 
   // Disable the Extruder for manual change
   disable_active_extruder();
@@ -494,6 +494,7 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
  */
 
 void show_continue_prompt(const bool is_reload) {
+  PORT_REDIRECT(SerialMask::All);
   DEBUG_SECTION(scp, "pause_print", true);
   DEBUG_ECHOLNPGM("... is_reload:", is_reload);
 
@@ -503,6 +504,7 @@ void show_continue_prompt(const bool is_reload) {
 }
 
 void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep_count/*=0*/ DXC_ARGS) {
+  PORT_REDIRECT(SerialMask::All);
   DEBUG_SECTION(wfc, "wait_for_confirmation", true);
   DEBUG_ECHOLNPGM("... is_reload:", is_reload, " maxbeep:", max_beep_count DXC_SAY);
 
