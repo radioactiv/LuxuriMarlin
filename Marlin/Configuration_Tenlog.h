@@ -1,12 +1,14 @@
 #define ACBed
 #define TitanExtruder
 #define HAS_STATUS_MESSAGE 1
-#define REPORT_FAN_CHANGE 1
+#define REPORT_FAN_CHANGE
+#define BABYSTEP_HOME_Z_OFFSET
 #define LUX_X_MIN_POS -47
 #define LUX_X2_MIN_POS 15
 #define LUX_X2_MAX_POS 279
 #define LUX_DEFAULT_DUPLICATION_X_OFFSET 117
 #define LUX_NUM_RUNOUT_SENSORS 1
+
 
 //Bed
 #if ENABLED(ACBed)
