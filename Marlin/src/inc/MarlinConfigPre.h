@@ -36,7 +36,12 @@
 
 #include "../core/macros.h"
 #include "../core/boards.h"
-#include "../../Configuration_tenlog.h"
+
+#ifndef TENLOG_CONFIG
+  #include "../../Configuration_MyTenlog.h"
+#endif
+
+#include "../../Configuration_builder.h"
 #include "../../Configuration.h"
 
 #ifdef CUSTOM_VERSION_FILE

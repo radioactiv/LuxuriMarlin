@@ -28,7 +28,7 @@
 /**
  * Marlin release version identifier
  */
-//#define SHORT_BUILD_VERSION "bugfix-2.1.x"
+#define SHORT_BUILD_VERSION "Luxuri for Marlin 2.1.x"
 
 /**
  * Verbose version identifier which should contain a reference to the location
@@ -46,7 +46,7 @@
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.
  */
-//#define MACHINE_NAME "3D Printer"
+#define MACHINE_NAME "Tenlog " . PIOENV
 
 /**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source

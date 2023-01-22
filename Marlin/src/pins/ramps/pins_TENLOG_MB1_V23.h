@@ -111,7 +111,7 @@
 //
 // PSU and Powerloss Recovery
 //
-#if ENABLED(TENLOG_POWER_RELAY)
+#if ENABLED(RockerPowerSwitch)
   #define POWER_HOLD_PIN 32
   #define POWER_HOLD_PIN_STATE HIGH
 #endif
