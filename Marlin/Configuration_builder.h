@@ -3,7 +3,7 @@
  * ******************************* DO NOT EDIT *******************************
  * ***************************************************************************
  *
- *   Configure your base machine in Configuration_Tenlog.h
+ *   Configure your base machine in Configuration_MyTenlog.h
  *   Then edit Configuration.adv and Configuration.h directly if needed.
  *
  */
