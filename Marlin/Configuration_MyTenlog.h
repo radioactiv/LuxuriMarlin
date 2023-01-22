@@ -3,7 +3,8 @@
  * *********************** CONFIGURE YOUR MACHINE HERE ***********************
  * ***************************************************************************
  *
- *   Comment and uncomment lines to match your machine configuration.
+ *   Comment and uncomment lines to match your machine configuration
+ *     or visit our Github Releases page for precompiled firmare.
  *   Visit our Github Wiki for help identifying parts.
  *
  */
