@@ -91,7 +91,7 @@
     #define LUX_INVERT_E1_DIR true
 	#endif
 #endif
-#if ENABLED(TMC2209ExtrudersOnlyDrivers) //2209 drivers on extruders only
+#if ENABLED(TMC2209ExtrudersOnly) //2209 drivers on extruders only
   #undef LUX_LIN_ADVANCE
   #undef LUX_INVERT_E0_DIR
   #undef LUX_INVERT_E1_DIR

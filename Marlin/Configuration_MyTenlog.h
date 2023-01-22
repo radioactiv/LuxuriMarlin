@@ -22,7 +22,7 @@
 // #define A4988Drivers
 #define TMC2208Drivers // (Stock most of the time)
 // #define TMC2209Drivers
-#define TMC2209ExtrudersOnlyDrivers //2209 drivers on extruders only
+#define TMC2209ExtrudersOnly //2209 drivers on extruders only
 
 /**
  * Bed Type
@@ -72,11 +72,11 @@
 /**
  * Alternate Motherboards
  */
-// #define OctopusMotherboard // https://www.thingiverse.com/thing:4886287 by Andrew Seago
+// #define OctopusBoard // https://www.thingiverse.com/thing:4886287 by Andrew Seago
 
 /**
  * Alternate Screens
  * DWIN is not supported by this firmware, visit https://github.com/InsanityAutomation/Marlin/tree/Tenlog_DWIN
  */
-// #define BTTTFTSCreen
+// #define BTTTFTScreen
 // #define LCDmini12864Screen

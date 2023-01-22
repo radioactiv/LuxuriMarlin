@@ -37,7 +37,7 @@
 #include "../core/macros.h"
 #include "../core/boards.h"
 
-#ifndef TENLOG_CONFIG
+#ifdef MY_TENLOG
   #include "../../Configuration_MyTenlog.h"
 #endif
 
