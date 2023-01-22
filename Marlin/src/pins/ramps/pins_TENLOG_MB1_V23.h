@@ -111,8 +111,10 @@
 //
 // PSU and Powerloss Recovery
 //
-#define POWER_LOSS_PIN 32
-#define POWER_LOSS_STATE HIGH
+#if ENABLED(TENLOG_POWER_RELAY)
+  #define POWER_HOLD_PIN 32
+  #define POWER_HOLD_PIN_STATE HIGH
+#endif
 #if ENABLED(PSU_CONTROL)
   #define PS_ON_PIN                           40  // The M80/M81 PSU pin for boards v2.1-2.3
 #endif
