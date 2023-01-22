@@ -12,8 +12,8 @@
 /**
  * Machine Type
  */
-#define TenlogHands2
-// #define TenlogD3
+// #define TenlogHands2
+#define TenlogD3
 // #define TenlogD5
 // #define TenlogD6
 
@@ -23,13 +23,13 @@
 // #define A4988Drivers
 #define TMC2208Drivers // (Stock most of the time)
 // #define TMC2209Drivers
-#define TMC2209ExtrudersOnly //2209 drivers on extruders only
+// #define TMC2209ExtrudersOnly //2209 drivers on extruders only
 
 /**
  * Bed Type
  */
-// #define DCBed //(Stock)
-#define ACBed
+#define DCBed //(Stock)
+// #define ACBed
 
 /**
  * Bed Endstop
@@ -40,15 +40,15 @@
 /**
  * Power Switch Type
  */
-// #define RockerPowerSwitch // (Stock)
-#define NormalPowerSwitch
+#define RockerPowerSwitch // (Stock)
+// #define NormalPowerSwitch
 
 /**
  * Toolhead
  */
-// #define TenlogToolhead // (Stock)
+#define TenlogToolhead // (Stock)
 // #define TenlogBMGToolhead
-#define HictopTitan // https://www.amazon.com/Titan-extruder-HICTOP-Hero-Tenlog/dp/B083TKZWZ1/
+// #define HictopTitan // https://www.amazon.com/Titan-extruder-HICTOP-Hero-Tenlog/dp/B083TKZWZ1/
 // #define BMGExtruderV2 // https://www.thingiverse.com/thing:4886319 by Andrew Seago
 // #define BMGExtruderV3 // https://www.thingiverse.com/thing:5207843 by Andrew Seago
 // #define H2Extruder // https://www.thingiverse.com/thing:5355296 by Brandon Smith
@@ -56,8 +56,8 @@
 /**
  * Hotend
  */
-// #define PFTEHotened // (Stock)
-#define AllMetalHotend
+#define PFTEHotened // (Stock)
+// #define AllMetalHotend
 
 /**
  * Filament Sensor
