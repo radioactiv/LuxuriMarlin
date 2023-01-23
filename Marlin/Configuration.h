@@ -1642,7 +1642,7 @@
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
 #define INVERT_X_DIR LUX_INVERT_X_DIR
 #define INVERT_Y_DIR LUX_INVERT_Y_DIR
-#define INVERT_Z_DIR LUX_INVERT_Y_DIR
+#define INVERT_Z_DIR LUX_INVERT_Z_DIR
 //#define INVERT_I_DIR false
 //#define INVERT_J_DIR false
 //#define INVERT_K_DIR false
