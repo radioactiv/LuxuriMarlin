@@ -63,7 +63,7 @@
  *       the capability is not present.
  */
 void GcodeSuite::M115() {
-  SERIAL_ECHOPGM("FIRMWARE_NAME:Marlin"
+  SERIAL_ECHOPGM("FIRMWARE_NAME:Luxuri for Marlin"
     " " DETAILED_BUILD_VERSION " (" __DATE__ " " __TIME__ ")"
     " SOURCE_CODE_URL:" SOURCE_CODE_URL
     " PROTOCOL_VERSION:" PROTOCOL_VERSION
