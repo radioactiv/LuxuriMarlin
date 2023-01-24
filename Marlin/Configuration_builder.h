@@ -58,6 +58,9 @@
 //Filament Sensor
 #define LUX_NUM_RUNOUT_SENSORS 1
 
+//Probe
+#define LUX_MESH_BED_LEVELING 1
+
 //Stepper Drivers
 #if ENABLED(TMC2208Drivers)
   #define LUX_XYZ_DRIVER_TYPE TMC2208_STANDALONE
@@ -66,9 +69,9 @@
   #define LUX_INVERT_Z_DIR false
   #define LUX_INVERT_E0_DIR true
 	#define LUX_INVERT_E1_DIR false
+  #define LUX_LIN_ADVANCE 0
 #elif ENABLED(TMC2209Drivers)
   #define LUX_XYZ_DRIVER_TYPE TMC2209_STANDALONE
-  #define LUX_LIN_ADVANCE
   #define LUX_INVERT_X_DIR false
   #define LUX_INVERT_Y_DIR true
   #define LUX_INVERT_Z_DIR false
@@ -78,9 +81,9 @@
   #else
     #define LUX_INVERT_E1_DIR false
 	#endif
+  #define LUX_LIN_ADVANCE 1
 #elif ENABLED(A4988Drivers)
   #define LUX_XYZ_DRIVER_TYPE A4988
-  #define LUX_LIN_ADVANCE
   #define LUX_INVERT_X_DIR true
   #define LUX_INVERT_Y_DIR false
   #define LUX_INVERT_Z_DIR true
@@ -90,19 +93,20 @@
   #else
     #define LUX_INVERT_E1_DIR true
 	#endif
+  #define LUX_LIN_ADVANCE 1
 #endif
 #if ENABLED(TMC2209ExtrudersOnly) //2209 drivers on extruders only
   #undef LUX_LIN_ADVANCE
   #undef LUX_INVERT_E0_DIR
   #undef LUX_INVERT_E1_DIR
   #define LUX_E_DRIVER_TYPE TMC2209_STANDALONE
-  #define LUX_LIN_ADVANCE
   #define LUX_INVERT_E0_DIR true
   #if ENABLED(HictopTitan)
     #define LUX_INVERT_E1_DIR true
   #else
     #define LUX_INVERT_E1_DIR false
   #endif
+  #define LUX_LIN_ADVANCE 1
 #else
   #define LUX_E_DRIVER_TYPE LUX_XYZ_DRIVER_TYPE
 #endif
