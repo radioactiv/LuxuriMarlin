@@ -97,7 +97,7 @@
 //
 // Fans
 //
-#if ENABLED(TitanExtruder)
+#if ENABLED(HictopTitan)
   #define FAN_PIN             5
   #define FAN2_PIN            9
 #else
