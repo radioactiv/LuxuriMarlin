@@ -113,6 +113,6 @@
 
 //Required Flags
 #define HAS_STATUS_MESSAGE 1 //M117 Support without a screen
-#define BABYSTEP_HOME_Z_OFFSET //Baby-step logic for current tool or probe
+#define BABYSTEP_HOTEND_Z_OFFSET 1//Baby-step logic for current tool or probe
 #define SAFETY_Z_UNPARK 4.00 //Avoid bed clips (Height to raise. Set to 0 for disable). Murdock 26/04/2021
 #define SAFETY_Y_UNPARK 15.00 //Avoid bed clips (Distance to move on Y axis for avoid bed clips). Murdock 26/04/2021

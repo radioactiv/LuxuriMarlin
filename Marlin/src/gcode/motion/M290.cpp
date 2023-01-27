@@ -37,7 +37,7 @@
   #include "../../feature/bedlevel/bedlevel.h"
 #endif
 
-#if ENABLED(BABYSTEP_ZPROBE_OFFSET) || ENABLED(BABYSTEP_HOME_Z_OFFSET)
+#if ENABLED(BABYSTEP_ZPROBE_OFFSET) || ENABLED(BABYSTEP_HOTEND_Z_OFFSET)
   FORCE_INLINE void mod_offset(const float &offs) {
     SERIAL_ECHO_START();
     if (active_extruder==0) {
@@ -49,7 +49,7 @@
         SERIAL_ECHO_MSG("Home Offset Z", home_offset[Z_AXIS]);
       #endif
     } else {
-      #if ENABLED(BABYSTEP_HOME_Z_OFFSET)
+      #if ENABLED(BABYSTEP_HOTEND_Z_OFFSET)
         hotend_offset[active_extruder].z -= offs;
         SERIAL_ECHO_MSG(STR_PROBE_OFFSET STR_Z ": ", hotend_offset[active_extruder].z);
       #endif
