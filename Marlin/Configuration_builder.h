@@ -59,7 +59,22 @@
 #define LUX_NUM_RUNOUT_SENSORS 1
 
 //Probe
-#define LUX_MESH_BED_LEVELING 1
+#if ENABLED(BLTouchProbe)
+  #define LUX_BLTOUCH 1
+  #define LUX_MIN_SOFTWARE_ENDSTOP_Z 0
+  #define LUX_AUTO_BED_LEVELING_UBL 1
+  #define LUX_UBL_DEVEL_DEBUGGING 1
+  #define LUX_Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN 1
+  #define LUX_Z_STEPPER_AUTO_ALIGN 1
+  #define LUX_Z_MIN_ENDSTOP_INVERTING false
+  
+#else
+  #define LUX_MIN_SOFTWARE_ENDSTOP_Z 1
+  #define LUX_MESH_BED_LEVELING 1
+  #define LUX_USE_ZMAX_PLUG 1
+  #define LUX_Z_MULTI_ENDSTOPS 1
+  #define LUX_Z_MIN_ENDSTOP_INVERTING true
+#endif
 
 //Stepper Drivers
 #if ENABLED(TMC2208Drivers)
@@ -113,6 +128,5 @@
 
 //Required Flags
 #define HAS_STATUS_MESSAGE 1 //M117 Support without a screen
-#define BABYSTEP_HOTEND_Z_OFFSET 1//Baby-step logic for current tool or probe
 #define SAFETY_Z_UNPARK 4.00 //Avoid bed clips (Height to raise. Set to 0 for disable). Murdock 26/04/2021
 #define SAFETY_Y_UNPARK 15.00 //Avoid bed clips (Distance to move on Y axis for avoid bed clips). Murdock 26/04/2021
