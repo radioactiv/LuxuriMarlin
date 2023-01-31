@@ -1,7 +1,7 @@
 Luxuri for Marlin 2.1.x brings enhanced features for your 8-bit Tenlog machine.  
 
 BL-Touch and bed mesh support is one of the most popular features.  
-Input Shaping is a new feature exclusive to Marlin 2.1.x
+Input Shaping is a new feature exclusive to Marlin 2.1.x  
 Linear Advance is excellent feature to enhance print quality and speed.  
  
 We've also written a whole new interface that unlocks the power of it's HMI screen.  
