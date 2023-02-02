@@ -284,6 +284,8 @@ bool wait_for_heatup = true;
  * ***************************************************************************
  */
 
+SET_INPUT_PULLDOWN(POWER_LOSS_PIN);
+
 /**
  * Stepper Reset (RigidBoard, et.al.)
  */
