@@ -111,10 +111,9 @@
 //
 // PSU and Powerloss Recovery
 //
-#if ENABLED(RockerPowerSwitch)
-  #define POWER_HOLD_PIN 32
-  #define POWER_HOLD_PIN_STATE HIGH
-#endif
+#define KILL_PIN 32
+#define KILL_PIN_STATE HIGH
+
 #if ENABLED(PSU_CONTROL)
   #define PS_ON_PIN                           40  // The M80/M81 PSU pin for boards v2.1-2.3
 #endif
