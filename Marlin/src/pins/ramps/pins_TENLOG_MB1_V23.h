@@ -97,7 +97,7 @@
 //
 // Fans
 //
-#if ENABLED(HictopTitan)
+#if ENABLED(HictopTitan)||ENABLED(BMGSuperVolcano)
   #define FAN_PIN             5
   #define FAN2_PIN            9
 #else
@@ -111,9 +111,12 @@
 //
 // PSU and Powerloss Recovery
 //
-#define KILL_PIN 32
-#define KILL_PIN_STATE HIGH
-
+#if ENABLED(NormalPowerSwitch)
+  //nothing
+#else
+  #define KILL_PIN 32
+  #define KILL_PIN_STATE HIGH
+#endif
 #if ENABLED(PSU_CONTROL)
   #define PS_ON_PIN                           40  // The M80/M81 PSU pin for boards v2.1-2.3
 #endif
