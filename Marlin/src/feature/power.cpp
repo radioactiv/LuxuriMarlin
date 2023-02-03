@@ -63,10 +63,6 @@ bool Power::psu_on;
 void Power::init() {
   psu_on = ENABLED(PSU_DEFAULT_OFF);              // Set opposite state to get full power_off/on
   TERN(PSU_DEFAULT_OFF, power_off(), power_on());
-  
-  #if ENABLED(RockerPowerSwitch)
-    SET_INPUT_PULLDOWN(POWER_HOLD_PIN);
-  #endif
 }
 
 /**

@@ -49,7 +49,9 @@
 //  No logic needed here
 
 //Toolhead
-#if ENABLED(HictopTitan)
+#if ENABLED(BMGSuperVolcano)
+  #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 382.17, 415 }
+#elif ENABLED(HictopTitan)
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 382.17, 382.17 }
 #else // Stock Toolhead
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 92.6, 92.6 }
@@ -70,13 +72,14 @@
   #define LUX_Z_STEPPER_AUTO_ALIGN 1
   #define LUX_NOZZLE_TO_PROBE_OFFSET { 7, -47, -1.34 }
   #define LUX_PROBING_MARGIN_BACK 30
-  // #define UBL_DEVEL_DEBUGGING //Broken, throwing ubl error in g28
+  #define UBL_DEVEL_DEBUGGING //Broken, throwing ubl error in g28
 #else
   #define LUX_MESH_BED_LEVELING 1
   #define LUX_MIN_SOFTWARE_ENDSTOP_Z 1
   #define LUX_USE_ZMAX_PLUG 1
   #define LUX_Z_MULTI_ENDSTOPS 1
   #define LUX_Z_MIN_ENDSTOP_INVERTING true
+  #define LUX_PROBING_MARGIN_BACK PROBING_MARGIN
 #endif
 
 //Stepper Drivers
