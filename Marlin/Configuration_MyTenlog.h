@@ -40,8 +40,8 @@
 /**
  * Power Switch Type
  */
-#define RockerPowerSwitch // (Stock)
-// #define NormalPowerSwitch
+#define MomentaryPowerSwitch // (Stock)
+// #define MaintainedPowerSwitch
 
 /**
  * Toolhead

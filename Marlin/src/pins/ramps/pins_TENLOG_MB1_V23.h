@@ -111,7 +111,7 @@
 //
 // PSU and Powerloss Recovery
 //
-#if ENABLED(NormalPowerSwitch)
+#if ENABLED(MaintainedPowerSwitch)
   //nothing
 #else
   #define KILL_PIN 32
