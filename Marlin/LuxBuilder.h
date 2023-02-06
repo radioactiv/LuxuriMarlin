@@ -72,6 +72,8 @@
   #define LUX_Z_STEPPER_AUTO_ALIGN 1
   #define LUX_NOZZLE_TO_PROBE_OFFSET { 7, -47, -1.34 }
   #define LUX_PROBING_MARGIN_BACK 30
+  #define LUX_Z_SAFE_HOMING 1
+  #define LUX_Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN 1
   #define UBL_DEVEL_DEBUGGING //Broken, throwing ubl error in g28
 #else
   #define LUX_MESH_BED_LEVELING 1
