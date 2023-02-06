@@ -82,3 +82,5 @@
  */
 // #define BTTTFTScreen
 // #define LCDmini12864Screen
+
+#define TENLOG_CONFIG "My Tenlog"
