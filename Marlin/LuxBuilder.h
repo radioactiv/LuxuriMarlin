@@ -49,7 +49,7 @@
 //  No logic needed here
 
 //Toolhead
-#if ENABLED(BMGSuperVolcano)
+#if ENABLED(TenlogBMGToolhead||BMGSuperVolcano||BMGExtruderV2||BMGExtruderV3)
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 382.17, 415 }
 #elif ENABLED(HictopTitan)
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 382.17, 382.17 }
