@@ -97,13 +97,8 @@
 //
 // Fans
 //
-#if ENABLED(HictopTitan)||ENABLED(BMGSuperVolcano)
-  #define FAN_PIN             5
-  #define FAN2_PIN            9
-#else
-  #define FAN_PIN             9
-  #define FAN2_PIN            5
-#endif
+#define FAN_PIN             9
+#define FAN2_PIN            5
 
 #define FIL_RUNOUT_PIN                        15
 //#define FIL_RUNOUT2_PIN                     21
