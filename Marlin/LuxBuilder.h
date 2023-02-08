@@ -75,13 +75,14 @@
   #define LUX_Z_SAFE_HOMING 1
   #define LUX_Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN 1
   #define UBL_DEVEL_DEBUGGING //Broken, throwing ubl error in g28
-#else
+#else //No probe
   #define LUX_MESH_BED_LEVELING 1
   #define LUX_MIN_SOFTWARE_ENDSTOP_Z 1
   #define LUX_USE_ZMAX_PLUG 1
   #define LUX_Z_MULTI_ENDSTOPS 1
   #define LUX_Z_MIN_ENDSTOP_INVERTING true
   #define LUX_PROBING_MARGIN_BACK PROBING_MARGIN
+  #define BABYSTEP_HOTEND_Z_OFFSET 1
 #endif
 
 //Stepper Drivers
