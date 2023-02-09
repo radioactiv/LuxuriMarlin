@@ -46,8 +46,8 @@
 /**
  * Toolhead
  */
-#define TenlogToolhead // (Stock)
-// #define TenlogBMGToolhead
+// #define TenlogToolhead // (Stock)
+#define TenlogBMGToolhead
 // #define BMGSuperVolcano
 // #define HictopTitan // https://www.amazon.com/Titan-extruder-HICTOP-Hero-Tenlog/dp/B083TKZWZ1/
 // #define BMGExtruderV2 // https://www.thingiverse.com/thing:4886319 by Andrew Seago
@@ -83,4 +83,4 @@
 // #define BTTTFTScreen
 // #define LCDmini12864Screen
 
-#define TENLOG_CONFIG "My Tenlog"
+// #define TENLOG_CONFIG "My Tenlog"
