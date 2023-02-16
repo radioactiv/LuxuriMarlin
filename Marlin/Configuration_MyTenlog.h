@@ -12,8 +12,8 @@
 /**
  * Machine Type
  */
-#define TenlogHands2
-// #define TenlogD3
+// #define TenlogHands2
+#define TenlogD3
 // #define TenlogD5
 // #define TenlogD6
 
@@ -23,13 +23,13 @@
 // #define A4988Drivers
 #define TMC2208Drivers // (Stock most of the time)
 // #define TMC2209Drivers
-#define TMC2209ExtrudersOnly //2209 drivers on extruders only
+// #define TMC2209ExtrudersOnly //2209 drivers on extruders only
 
 /**
  * Bed Type
  */
-// #define DCBed //(Stock)
-#define ACBed
+#define DCBed //(Stock)
+// #define ACBed
 
 /**
  * Bed Endstop
@@ -40,8 +40,8 @@
 /**
  * Power Switch Type
  */
-// #define MomentaryPowerSwitch // (Stock)
-#define MaintainedPowerSwitch
+#define MomentaryPowerSwitch // (Stock)
+// #define MaintainedPowerSwitch
 
 /**
  * Toolhead
@@ -57,8 +57,8 @@
 /**
  * Hotend
  */
-// #define PFTEHotened // (Stock)
-#define AllMetalHotend
+#define PFTEHotened // (Stock)
+// #define AllMe0talHotend
 
 /**
  * Filament Sensor
@@ -69,7 +69,7 @@
 /**
  * Probe
  */
-#define BLTouchProbe
+// #define BLTouchProbe
 
 /**
  * Alternate Motherboards
