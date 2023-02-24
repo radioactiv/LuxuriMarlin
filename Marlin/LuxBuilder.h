@@ -18,7 +18,6 @@
   #define LUX_X2_MAX_POS 279
   #define LUX_Y_MAX_POS 253
   #define LUX_Z_MAX_POS 260
-  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 117
 #elif ENABLED(TenlogD3)
   #define LUX_X_BED_SIZE 310
   #define LUX_Y_BED_SIZE 310
@@ -28,7 +27,6 @@
   #define LUX_X2_MAX_POS 359
   #define LUX_Y_MAX_POS 333
   #define LUX_Z_MAX_POS 350
-  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 155
 #endif
 
 //Bed Type
@@ -55,6 +53,14 @@
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 382.17, 382.17 }
 #else // Stock Toolhead
   #define LUX_DEFAULT_AXIS_STEPS_PER_UNIT { 80, 80, 800, 92.6, 92.6 }
+#endif
+
+#if ENABLED(HictopTitan) && ENABLED(TenlogD3)
+  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 142
+#elif ENABLED(TenlogD3)
+  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 155
+#elif ENABLED(TenlogD2)
+  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 115
 #endif
 
 //Filament Sensor
