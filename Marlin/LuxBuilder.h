@@ -97,12 +97,13 @@
   #define LUX_INVERT_X_DIR false
   #define LUX_INVERT_Y_DIR true
   #define LUX_INVERT_Z_DIR false
+  #define LUX_INVERT_E0_DIR true
   #if ENABLED(HictopTitan)
     #define LUX_INVERT_E1_DIR true
   #else
     #define LUX_INVERT_E1_DIR false
 	#endif
-  #define LUX_LIN_ADVANCE 0
+  #define LUX_LIN_ADVANCE 1
 #elif ENABLED(TMC2209Drivers)
   #define LUX_XYZ_DRIVER_TYPE TMC2209_STANDALONE
   #define LUX_INVERT_X_DIR false
