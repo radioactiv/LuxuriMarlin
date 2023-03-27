@@ -27,13 +27,24 @@
   #define LUX_X2_MAX_POS 359
   #define LUX_Y_MAX_POS 333
   #define LUX_Z_MAX_POS 350
+#elif ENABLED(TenlogD5)
+  #define LUX_X_BED_SIZE 505
+  #define LUX_Y_BED_SIZE 520
+  #define LUX_X_MIN_POS -47
+  #define LUX_X_MAX_POS  LUX_X_BED_SIZE
+  #define LUX_X2_MIN_POS 15
+  #define LUX_X2_MAX_POS 554
+  #define LUX_Y_MAX_POS 533
+  #define LUX_Z_MAX_POS 610
 #endif
 
 //Bed Type
 #if ENABLED(ACBed)
   #define LUX_TEMP_SENSOR_BED 11
+  #define LUX_BED_MAXTEMP 120
 #else //DC Bed
   #define LUX_TEMP_SENSOR_BED 1
+  #define LUX_BED_MAXTEMP 90
 #endif
 
 //Bed Endstop
@@ -59,8 +70,18 @@
   #define LUX_DEFAULT_DUPLICATION_X_OFFSET 142
 #elif ENABLED(TenlogD3)
   #define LUX_DEFAULT_DUPLICATION_X_OFFSET 155
+#elif ENABLED(TenlogD5)
+  #define LUX_DEFAULT_DUPLICATION_X_OFFSET 250
 #elif ENABLED(TenlogHands2)
   #define LUX_DEFAULT_DUPLICATION_X_OFFSET 115
+#endif
+
+#if ENABLED(AllMetalHotend)
+  #define LUX_HEATER_0_MAXTEMP 310
+  #define LUX_HEATER_1_MAXTEMP 310
+#else
+  #define LUX_HEATER_0_MAXTEMP 255
+  #define LUX_HEATER_1_MAXTEMP 255
 #endif
 
 //Filament Sensor
