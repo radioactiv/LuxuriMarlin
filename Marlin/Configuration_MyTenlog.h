@@ -58,7 +58,7 @@
  * Hotend
  */
 #define PFTEHotened // (Stock)
-// #define AllMe0talHotend
+// #define AllMetalHotend
 
 /**
  * Filament Sensor
