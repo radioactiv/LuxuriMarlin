@@ -21,8 +21,8 @@
  * Stepper Drivers
  */
 // #define A4988Drivers
-#define TMC2208Drivers // (Stock most of the time)
-// #define TMC2209Drivers
+// #define TMC2208Drivers // (Stock most of the time)
+#define TMC2209Drivers
 // #define TMC2209ExtrudersOnly //2209 drivers on extruders only
 
 /**
@@ -46,8 +46,8 @@
 /**
  * Toolhead
  */
-#define TenlogToolhead // (Stock)
-// #define TenlogBMGToolhead
+// #define TenlogToolhead // (Stock)
+#define TenlogBMGToolhead
 // #define BMGSuperVolcano
 // #define HictopTitan // https://www.amazon.com/Titan-extruder-HICTOP-Hero-Tenlog/dp/B083TKZWZ1/
 // #define BMGExtruderV2 // https://www.thingiverse.com/thing:4886319 by Andrew Seago
@@ -69,7 +69,7 @@
 /**
  * Probe
  */
-// #define BLTouchProbe
+#define BLTouchProbe
 
 /**
  * Alternate Motherboards
