@@ -47,7 +47,7 @@ bool FilamentMonitorBase::enabled = true,
 
 #if HAS_FILAMENT_RUNOUT_DISTANCE
   float RunoutResponseDelayed::runout_distance_mm = FILAMENT_RUNOUT_DISTANCE_MM;
-  volatile float RunoutResponseDelayed::runout_mm_countdown[NUM_RUNOUT_SENSORS];
+  volatile countdown_t RunoutResponseDelayed::mm_countdown;
   #if ENABLED(FILAMENT_MOTION_SENSOR)
     uint8_t FilamentSensorEncoder::motion_detected;
   #endif
@@ -101,7 +101,6 @@ void event_filament_runout(const uint8_t extruder) {
 
   const bool run_runout_script = !runout.host_handling;
 
-  PORT_REDIRECT(SerialMask::All);
   #if ENABLED(HOST_ACTION_COMMANDS)
     if (run_runout_script
       && ( strstr(FILAMENT_RUNOUT_SCRIPT, "M600")

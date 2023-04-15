@@ -31,37 +31,6 @@
 
 #if ENABLED(DWIN_LCD_PROUI)
 
-#if DISABLED(LIMITED_MAX_FR_EDITING)
-  #warning "LIMITED_MAX_FR_EDITING is recommended with ProUI."
-#endif
-#if DISABLED(LIMITED_MAX_ACCEL_EDITING)
-  #warning "LIMITED_MAX_ACCEL_EDITING is recommended with ProUI."
-#endif
-#if ENABLED(CLASSIC_JERK) && DISABLED(LIMITED_JERK_EDITING)
-  #warning "LIMITED_JERK_EDITING is recommended with ProUI."
-#endif
-#if DISABLED(INDIVIDUAL_AXIS_HOMING_SUBMENU)
-  #warning "INDIVIDUAL_AXIS_HOMING_SUBMENU is recommended with ProUI."
-#endif
-#if DISABLED(SET_PROGRESS_MANUALLY)
-  #warning "SET_PROGRESS_MANUALLY is recommended with ProUI."
-#endif
-#if DISABLED(STATUS_MESSAGE_SCROLLING)
-  #warning "STATUS_MESSAGE_SCROLLING is recommended with ProUI."
-#endif
-#if DISABLED(BAUD_RATE_GCODE)
-  #warning "BAUD_RATE_GCODE is recommended with ProUI."
-#endif
-#if DISABLED(SOUND_MENU_ITEM)
-  #warning "SOUND_MENU_ITEM is recommended with ProUI."
-#endif
-#if DISABLED(PRINTCOUNTER)
-  #warning "PRINTCOUNTER is recommended with ProUI."
-#endif
-#if HAS_MESH && DISABLED(MESH_EDIT_MENU)
-  #warning "MESH_EDIT_MENU is recommended with ProUI."
-#endif
-
 #include "../../fontutils.h"
 #include "../../marlinui.h"
 
@@ -142,7 +111,7 @@
   #include "endstop_diag.h"
 #endif
 
-#if HAS_PIDPLOT
+#if SHOW_TUNING_GRAPH
   #include "plot.h"
 #endif
 
@@ -297,6 +266,9 @@ MenuClass *MaxAccelMenu = nullptr;
   MenuClass *MaxJerkMenu = nullptr;
 #endif
 MenuClass *StepsMenu = nullptr;
+#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
+  MenuClass *HotendMPCMenu = nullptr;
+#endif
 #if ENABLED(PIDTEMP)
   MenuClass *HotendPIDMenu = nullptr;
 #endif
@@ -872,7 +844,7 @@ void SetMediaAutoMount() {
 }
 
 inline uint16_t nr_sd_menu_items() {
-  return _MIN(card.get_num_Files() + !card.flag.workDirIsRoot, MENU_MAX_ITEMS);
+  return _MIN(card.get_num_items() + !card.flag.workDirIsRoot, MENU_MAX_ITEMS);
 }
 
 void make_name_without_ext(char *dst, char *src, size_t maxlen=MENU_CHAR_LIMIT) {
@@ -919,7 +891,7 @@ void onClickSDItem() {
   if (hasUpDir && CurrentMenu->selected == 1) return SDCard_Up();
   else {
     const uint16_t filenum = CurrentMenu->selected - 1 - hasUpDir;
-    card.getfilename_sorted(SD_ORDER(filenum, card.get_num_Files()));
+    card.selectFileByIndexSorted(filenum);
 
     // Enter that folder!
     if (card.flag.filenameIsDir) return SDCard_Folder(card.filename);
@@ -962,7 +934,7 @@ void onClickSDItem() {
       last_itemselected = selected;
       if (selected >= 1 + hasUpDir) {
         const int8_t filenum = selected - 1 - hasUpDir; // Skip "Back" and ".."
-        card.getfilename_sorted(SD_ORDER(filenum, card.get_num_Files()));
+        card.selectFileByIndexSorted(filenum);
         make_name_without_ext(shift_name, card.longest_filename(), LONG_FILENAME_LENGTH);
         shift_len = strlen(shift_name);
         shift_amt = 0;
@@ -987,7 +959,7 @@ void onDrawFileName(MenuItemClass* menuitem, int8_t line) {
   }
   else {
     uint8_t icon;
-    card.getfilename_sorted(SD_ORDER(menuitem->pos - is_subdir - 1, card.get_num_Files()));
+    card.selectFileByIndexSorted(menuitem->pos - is_subdir - 1);
     make_name_without_ext(shift_name, card.longest_filename());
     icon = card.flag.filenameIsDir ? ICON_Folder : card.fileIsBinary() ? ICON_Binary : ICON_File;
     Draw_Menu_Line(line, icon, shift_name);
@@ -1275,8 +1247,8 @@ void EachMomentUpdate() {
     #if HAS_ESDIAG
       if (checkkey == ESDiagProcess) ESDiag.Update();
     #endif
-    #if HAS_PIDPLOT
-      if (checkkey == PidProcess) Plot.Update((HMI_value.pidresult == PIDTEMP_START) ? thermalManager.wholeDegHotend(0) : thermalManager.wholeDegBed());
+    #if SHOW_TUNING_GRAPH
+      if (checkkey == PidProcess) plot.Update((HMI_value.pidresult == PIDTEMP_START) ? thermalManager.wholeDegHotend(0) : thermalManager.wholeDegBed());
     #endif
   }
 
@@ -1299,7 +1271,6 @@ void EachMomentUpdate() {
 
     if ((Printing() != HMI_flag.printing_flag) && !HMI_flag.home_flag) {
       HMI_flag.printing_flag = Printing();
-      DEBUG_ECHOLNPGM("printing_flag: ", HMI_flag.printing_flag);
       if (HMI_flag.printing_flag)
         DWIN_Print_Started();
       else if (HMI_flag.abort_flag)
@@ -1310,7 +1281,6 @@ void EachMomentUpdate() {
 
     if ((printingIsPaused() != HMI_flag.pause_flag) && !HMI_flag.home_flag) {
       HMI_flag.pause_flag = printingIsPaused();
-      DEBUG_ECHOLNPGM("pause_flag: ", HMI_flag.pause_flag);
       if (HMI_flag.pause_flag)
         DWIN_Print_Pause();
       else if (HMI_flag.abort_flag)
@@ -1375,7 +1345,7 @@ void EachMomentUpdate() {
       DWINUI::Draw_Button(BTN_Cancel,    26, 280);
       DWINUI::Draw_Button(BTN_Continue, 146, 280);
     }
-    SdFile *dir = nullptr;
+    MediaFile *dir = nullptr;
     const char * const filename = card.diveToFile(true, dir, recovery.info.sd_filename);
     card.selectFileByName(filename);
     DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 207, card.longest_filename());
@@ -1498,36 +1468,77 @@ void DWIN_LevelingDone() {
   }
 #endif
 
-// PID process
+// PID/MPC process
 
-#if BOTH(HAS_PIDPLOT, DWIN_PID_TUNE)
+#if SHOW_TUNING_GRAPH
 
-  void DWIN_Draw_PIDPopup() {
-    frame_rect_t gfrm = { 40, 180, DWIN_WIDTH - 80, 120 };
+  #include "plot.h"
+
+  celsius_t _maxtemp, _target;
+  void DWIN_Draw_PID_MPC_Popup() {
+    constexpr frame_rect_t gfrm = { 40, 180, DWIN_WIDTH - 80, 120 };
     DWINUI::ClearMainArea();
     Draw_Popup_Bkgd();
-    DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 100, GET_TEXT_F(MSG_PID_AUTOTUNE));
-    DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("PID target:    Celsius"));
+
     switch (HMI_value.pidresult) {
-      #if ENABLED(PIDTEMP)
-        case PIDTEMP_START:
+      default: return;
+      #if ENABLED(MPC_AUTOTUNE)
+        case MPCTEMP_START:
+          DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 100, GET_TEXT_F(MSG_MPC_AUTOTUNE));
+          DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("MPC target:    Celsius"));
+          break;
+      #endif
+      #if EITHER(PIDTEMP, PIDTEMPBED)
+        TERN_(PIDTEMP,    case PIDTEMP_START:)
+        TERN_(PIDTEMPBED, case PIDTEMPBED_START:)
+          DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 100, GET_TEXT_F(MSG_PID_AUTOTUNE));
+          DWINUI::Draw_String(HMI_data.PopupTxt_Color, gfrm.x, gfrm.y - DWINUI::fontHeight() - 4, F("PID target:    Celsius"));
+          break;
+      #endif
+    }
+
+    switch (HMI_value.pidresult) {
+      default: break;
+      #if EITHER(PIDTEMP, MPC_AUTOTUNE)
+        TERN_(PIDTEMP,      case PIDTEMP_START:)
+        TERN_(MPC_AUTOTUNE, case MPCTEMP_START:)
           DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 120, F("for Nozzle is running."));
-          Plot.Draw(gfrm, thermalManager.hotend_maxtemp[0], HMI_data.HotendPidT);
-          DWINUI::Draw_Int(HMI_data.PopupTxt_Color, 3, gfrm.x + 90, gfrm.y - DWINUI::fontHeight() - 4, HMI_data.HotendPidT);
           break;
       #endif
       #if ENABLED(PIDTEMPBED)
         case PIDTEMPBED_START:
           DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 120, F("for BED is running."));
-          Plot.Draw(gfrm, BED_MAXTEMP, HMI_data.BedPidT);
-          DWINUI::Draw_Int(HMI_data.PopupTxt_Color, 3, gfrm.x + 90, gfrm.y - DWINUI::fontHeight() - 4, HMI_data.BedPidT);
           break;
       #endif
-      default: break;
     }
+
+    switch (HMI_value.pidresult) {
+      default: break;
+      #if ENABLED(MPC_AUTOTUNE)
+        case MPCTEMP_START:
+          _maxtemp = thermalManager.hotend_maxtemp[0];
+          _target = 200;
+          break;
+      #endif
+      #if ENABLED(PIDTEMP)
+        case PIDTEMP_START:
+          _maxtemp = thermalManager.hotend_maxtemp[0];
+          _target = HMI_data.HotendPidT;
+          break;
+      #endif
+      #if ENABLED(PIDTEMPBED)
+        case PIDTEMPBED_START:
+          _maxtemp = BED_MAXTEMP;
+          _target = HMI_data.BedPidT;
+          break;
+      #endif
+    }
+
+    plot.Draw(gfrm, _maxtemp, _target);
+    DWINUI::Draw_Int(HMI_data.PopupTxt_Color, 3, gfrm.x + 90, gfrm.y - DWINUI::fontHeight() - 4, _target);
   }
 
-#endif
+#endif // SHOW_TUNING_GRAPH
 
 #if DWIN_PID_TUNE
 
@@ -1542,40 +1553,40 @@ void DWIN_LevelingDone() {
     }
   }
 
-  void DWIN_PidTuning(pidresult_t result) {
+  void DWIN_PidTuning(tempcontrol_t result) {
     HMI_value.pidresult = result;
     switch (result) {
       #if ENABLED(PIDTEMP)
         case PIDTEMP_START:
           HMI_SaveProcessID(PidProcess);
-          #if HAS_PIDPLOT
-            DWIN_Draw_PIDPopup();
+          #if SHOW_TUNING_GRAPH
+            DWIN_Draw_PID_MPC_Popup();
           #else
             DWIN_Draw_Popup(ICON_TempTooHigh, GET_TEXT_F(MSG_PID_AUTOTUNE), F("for Nozzle is running."));
           #endif
           break;
-        case PID_BAD_HEATER_ID:
+        case PID_TEMP_TOO_HIGH:
           checkkey = last_checkkey;
-          DWIN_Popup_Confirm(ICON_TempTooLow, GET_TEXT_F(MSG_PID_AUTOTUNE_FAILED), GET_TEXT_F(MSG_BAD_HEATER_ID));
+          DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_PID_AUTOTUNE_FAILED), GET_TEXT_F(MSG_TEMP_TOO_HIGH));
           break;
       #endif
       #if ENABLED(PIDTEMPBED)
         case PIDTEMPBED_START:
           HMI_SaveProcessID(PidProcess);
-          #if HAS_PIDPLOT
-            DWIN_Draw_PIDPopup();
+          #if SHOW_TUNING_GRAPH
+            DWIN_Draw_PID_MPC_Popup();
           #else
             DWIN_Draw_Popup(ICON_TempTooHigh, GET_TEXT_F(MSG_PID_AUTOTUNE), F("for BED is running."));
           #endif
           break;
       #endif
+      case PID_BAD_HEATER_ID:
+        checkkey = last_checkkey;
+        DWIN_Popup_Confirm(ICON_TempTooLow, GET_TEXT_F(MSG_PID_AUTOTUNE_FAILED), GET_TEXT_F(MSG_PID_BAD_HEATER_ID));
+        break;
       case PID_TUNING_TIMEOUT:
         checkkey = last_checkkey;
         DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_ERROR), GET_TEXT_F(MSG_PID_TIMEOUT));
-        break;
-      case PID_TEMP_TOO_HIGH:
-        checkkey = last_checkkey;
-        DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_PID_AUTOTUNE_FAILED), GET_TEXT_F(MSG_TEMP_TOO_HIGH));
         break;
       case PID_DONE:
         checkkey = last_checkkey;
@@ -1589,9 +1600,45 @@ void DWIN_LevelingDone() {
 
 #endif // DWIN_PID_TUNE
 
+#if ENABLED(MPC_AUTOTUNE)
+
+  void DWIN_MPCTuning(tempcontrol_t result) {
+    HMI_value.pidresult = result;
+    switch (result) {
+      case MPCTEMP_START:
+        HMI_SaveProcessID(MPCProcess);
+        #if SHOW_TUNING_GRAPH
+          DWIN_Draw_PID_MPC_Popup();
+        #else
+          DWIN_Draw_Popup(ICON_TempTooHigh, GET_TEXT_F(MSG_MPC_AUTOTUNE), F("for Nozzle is running."));
+        #endif
+        break;
+      case MPC_TEMP_ERROR:
+        checkkey = last_checkkey;
+        DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_PID_AUTOTUNE_FAILED), F(STR_MPC_TEMPERATURE_ERROR));
+        ui.reset_alert_level();
+        break;
+      case MPC_INTERRUPTED:
+        checkkey = last_checkkey;
+        DWIN_Popup_Confirm(ICON_TempTooHigh, GET_TEXT_F(MSG_ERROR), F(STR_MPC_AUTOTUNE_INTERRUPTED));
+        ui.reset_alert_level();
+        break;
+      case MPC_DONE:
+        checkkey = last_checkkey;
+        DWIN_Popup_Confirm(ICON_TempTooLow, GET_TEXT_F(MSG_MPC_AUTOTUNE), GET_TEXT_F(MSG_BUTTON_DONE));
+        ui.reset_alert_level();
+        break;
+      default:
+        checkkey = last_checkkey;
+        ui.reset_alert_level();
+        break;
+    }
+  }
+
+#endif // MPC_AUTOTUNE
+
 // Started a Print Job
 void DWIN_Print_Started() {
-  DEBUG_ECHOLNPGM("DWIN_Print_Started: ", SD_Printing());
   TERN_(HAS_GCODE_PREVIEW, if (Host_Printing()) Preview_Invalidate());
   _percent_done = 0;
   _remain_time = 0;
@@ -1605,20 +1652,17 @@ void DWIN_Print_Started() {
 
 // Pause a print job
 void DWIN_Print_Pause() {
-  DEBUG_ECHOLNPGM("DWIN_Print_Pause");
   ICON_ResumeOrPause();
 }
 
 // Resume print job
 void DWIN_Print_Resume() {
-  DEBUG_ECHOLNPGM("DWIN_Print_Resume");
   ICON_ResumeOrPause();
   LCD_MESSAGE(MSG_RESUME_PRINT);
 }
 
 // Ended print job
 void DWIN_Print_Finished() {
-  DEBUG_ECHOLNPGM("DWIN_Print_Finished");
   TERN_(POWER_LOSS_RECOVERY, if (card.isPrinting()) recovery.cancel());
   HMI_flag.pause_flag = false;
   wait_for_heatup = false;
@@ -1629,7 +1673,6 @@ void DWIN_Print_Finished() {
 
 // Print was aborted
 void DWIN_Print_Aborted() {
-  DEBUG_ECHOLNPGM("DWIN_Print_Aborted");
   DWIN_Print_Finished();
 }
 
@@ -1677,7 +1720,6 @@ void DWIN_SetColorDefaults() {
 }
 
 void DWIN_SetDataDefaults() {
-  DEBUG_ECHOLNPGM("DWIN_SetDataDefaults");
   DWIN_SetColorDefaults();
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.StatusBg_Color);
   TERN_(PIDTEMP, HMI_data.HotendPidT = DEF_HOTENDPIDT);
@@ -1701,13 +1743,10 @@ void DWIN_SetDataDefaults() {
 }
 
 void DWIN_CopySettingsTo(char * const buff) {
-  DEBUG_ECHOLNPGM("DWIN_CopySettingsTo");
-  DEBUG_ECHOLNPGM("HMI_data: ", sizeof(HMI_data_t));
   memcpy(buff, &HMI_data, eeprom_data_size);
 }
 
 void DWIN_CopySettingsFrom(const char * const buff) {
-  DEBUG_ECHOLNPGM("DWIN_CopySettingsFrom");
   memcpy(&HMI_data, buff, sizeof(HMI_data_t));
   if (HMI_data.Text_Color == HMI_data.Background_Color) DWIN_SetColorDefaults();
   DWINUI::SetColors(HMI_data.Text_Color, HMI_data.Background_Color, HMI_data.StatusBg_Color);
@@ -1727,18 +1766,14 @@ void DWIN_CopySettingsFrom(const char * const buff) {
 
 // Initialize or re-initialize the LCD
 void MarlinUI::init_lcd() {
-  DEBUG_ECHOLNPGM("MarlinUI::init_lcd");
   delay(750);   // wait to wakeup screen
   const bool hs = DWIN_Handshake(); UNUSED(hs);
-  DEBUG_ECHOPGM("DWIN_Handshake ");
-  DEBUG_ECHOLNF(hs ? F("ok.") : F("error."));
   DWIN_Frame_SetDir(1);
   DWIN_JPG_CacheTo1(Language_English);
   Encoder_Configuration();
 }
 
 void DWIN_InitScreen() {
-  DEBUG_ECHOLNPGM("DWIN_InitScreen");
   DWIN_SetColorDefaults();
   HMI_Init();   // draws boot screen
   DWINUI::init();
@@ -1997,7 +2032,6 @@ void AutoHome() { queue.inject_P(G28_STR); }
     #if EITHER(BABYSTEP_ZPROBE_OFFSET, JUST_BABYSTEP)
       const_float_t step_zoffset = round((MenuData.Value / 100.0f) * planner.settings.axis_steps_per_mm[Z_AXIS]) - babystep.accum;
       if (BABYSTEP_ALLOWED()) babystep.add_steps(Z_AXIS, step_zoffset);
-      //DEBUG_ECHOLNF(F("BB Steps: "), step_zoffset);
     #endif
   }
   void SetZOffset() {
@@ -2177,10 +2211,8 @@ void SetMoveZ() { HMI_value.axis = Z_AXIS; SetPFloatOnClick(Z_MIN_POS, Z_MAX_POS
   void ProbeStow() { probe.stow(); }
   void ProbeDeploy() { probe.deploy(); }
 
-  #if ENABLED(BLTOUCH_HS_MODE)
-    void SetHSMode() {
-      Toggle_Chkb_Line(bltouch.high_speed_mode);
-    }
+  #if HAS_BLTOUCH_HS_MODE
+    void SetHSMode() { Toggle_Chkb_Line(bltouch.high_speed_mode); }
   #endif
 
 #endif
@@ -3054,7 +3086,7 @@ void Draw_Control_Menu() {
 
 void Draw_AdvancedSettings_Menu() {
   checkkey = Menu;
-  if (SET_MENU(AdvancedSettings, MSG_ADVANCED_SETTINGS, 18)) {
+  if (SET_MENU(AdvancedSettings, MSG_ADVANCED_SETTINGS, 19)) {
     BACK_ITEM(Goto_Main_Menu);
     #if ENABLED(EEPROM_SETTINGS)
       MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, WriteEeprom);
@@ -3068,6 +3100,9 @@ void Draw_AdvancedSettings_Menu() {
     MENU_ITEM(ICON_FilSet, MSG_FILAMENT_SET, onDrawSubMenu, Draw_FilSet_Menu);
     #if ENABLED(PIDTEMP)
       MENU_ITEM_F(ICON_PIDNozzle, STR_HOTEND_PID " Settings", onDrawSubMenu, Draw_HotendPID_Menu);
+    #endif
+    #if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
+      MENU_ITEM_F(ICON_MPCNozzle, "MPC Settings", onDrawSubMenu, Draw_HotendMPC_Menu);
     #endif
     #if ENABLED(PIDTEMPBED)
       MENU_ITEM_F(ICON_PIDBed, STR_BED_PID " Settings", onDrawSubMenu, Draw_BedPID_Menu);
@@ -3147,7 +3182,7 @@ void Draw_Move_Menu() {
         MENU_ITEM(ICON_ProbeStow, MSG_MANUAL_STOW, onDrawMenuItem, ProbeStow);
         MENU_ITEM(ICON_ProbeDeploy, MSG_MANUAL_DEPLOY, onDrawMenuItem, ProbeDeploy);
         MENU_ITEM(ICON_BltouchReset, MSG_BLTOUCH_RESET, onDrawMenuItem, bltouch._reset);
-        #if ENABLED(BLTOUCH_HS_MODE)
+        #if HAS_BLTOUCH_HS_MODE
           EDIT_ITEM(ICON_HSMode, MSG_ENABLE_HS_MODE, onDrawChkbMenu, SetHSMode, &bltouch.high_speed_mode);
         #endif
       #endif
@@ -3499,6 +3534,46 @@ void Draw_Steps_Menu() {
   }
 
 #endif
+
+#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
+
+  #if ENABLED(MPC_AUTOTUNE_MENU)
+    void HotendMPC() { thermalManager.MPC_autotune(active_extruder); }
+  #endif
+  #if ENABLED(MPC_EDIT_MENU)
+    void SetHeaterPower() { SetPFloatOnClick(1, 200, 1); }
+    void SetBlkHeatCapacity() { SetPFloatOnClick(0, 40, 2); }
+    void SetSensorResponse() { SetPFloatOnClick(0, 1, 4); }
+    void SetAmbientXfer() { SetPFloatOnClick(0, 1, 4); }
+    #if ENABLED(MPC_INCLUDE_FAN)
+      void onDrawFanAdj(MenuItemClass* menuitem, int8_t line) { onDrawFloatMenu(menuitem, line, 4, thermalManager.temp_hotend[0].fanCoefficient()); }
+      void ApplyFanAdj() { thermalManager.temp_hotend[0].applyFanAdjustment(MenuData.Value / POW(10, 4)); }
+      void SetFanAdj() { SetFloatOnClick(0, 1, 4, thermalManager.temp_hotend[0].fanCoefficient(), ApplyFanAdj); }
+    #endif
+  #endif
+
+  void Draw_HotendMPC_Menu() {
+    checkkey = Menu;
+    if (SET_MENU_F(HotendMPCMenu, "MPC Settings", 7)) {
+      MPC_t &mpc = thermalManager.temp_hotend[0].mpc;
+      BACK_ITEM(Draw_AdvancedSettings_Menu);
+      #if ENABLED(MPC_AUTOTUNE_MENU)
+        MENU_ITEM(ICON_MPCNozzle, MSG_MPC_AUTOTUNE, onDrawMenuItem, HotendMPC);
+      #endif
+      #if ENABLED(MPC_EDIT_MENU)
+        EDIT_ITEM(ICON_MPCHeater, MSG_MPC_POWER, onDrawPFloatMenu, SetHeaterPower, &mpc.heater_power);
+        EDIT_ITEM(ICON_MPCHeatCap, MSG_MPC_BLOCK_HEAT_CAPACITY, onDrawPFloat2Menu, SetBlkHeatCapacity, &mpc.block_heat_capacity);
+        EDIT_ITEM(ICON_MPCValue, MSG_SENSOR_RESPONSIVENESS, onDrawPFloat4Menu, SetSensorResponse, &mpc.sensor_responsiveness);
+        EDIT_ITEM(ICON_MPCValue, MSG_MPC_AMBIENT_XFER_COEFF, onDrawPFloat4Menu, SetAmbientXfer, &mpc.ambient_xfer_coeff_fan0);
+        #if ENABLED(MPC_INCLUDE_FAN)
+          EDIT_ITEM(ICON_MPCFan, MSG_MPC_AMBIENT_XFER_COEFF_FAN, onDrawFanAdj, SetFanAdj, &mpc.fan255_adjustment);
+        #endif
+      #endif
+    }
+    UpdateMenu(HotendMPCMenu);
+  }
+
+#endif // MPC_EDIT_MENU || MPC_AUTOTUNE_MENU
 
 #if ENABLED(PIDTEMPBED)
 

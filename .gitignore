@@ -172,3 +172,5 @@ __pycache__
 *_log.csv
 
 #Custom
+.vscode/extensions.json
+Marlin/Configuration_nix.h

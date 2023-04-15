@@ -70,17 +70,30 @@ enum processID : uint8_t {
   WaitResponse,
   Homing,
   PidProcess,
+  MPCProcess,
   NothingToDo
 };
 
-enum pidresult_t : uint8_t {
-  PIDTEMP_START = 0,
-  PIDTEMPBED_START,
-  PID_BAD_HEATER_ID,
-  PID_TEMP_TOO_HIGH,
-  PID_TUNING_TIMEOUT,
-  PID_DONE,
-};
+#if EITHER(DWIN_PID_TUNE, MPC_AUTOTUNE)
+
+  enum tempcontrol_t : uint8_t {
+    #if DWIN_PID_TUNE
+      PID_DONE,
+      PIDTEMP_START,
+      PIDTEMPBED_START,
+      PID_BAD_HEATER_ID,
+      PID_TEMP_TOO_HIGH,
+      PID_TUNING_TIMEOUT,
+    #endif
+    #if ENABLED(MPC_AUTOTUNE)
+      MPC_DONE,
+      MPCTEMP_START,
+      MPC_TEMP_ERROR,
+      MPC_INTERRUPTED
+    #endif
+  };
+
+#endif
 
 #define DWIN_CHINESE 123
 #define DWIN_ENGLISH 0
@@ -142,7 +155,7 @@ static constexpr size_t eeprom_data_size = sizeof(HMI_data_t);
 typedef struct {
   int8_t Color[3];                    // Color components
   #if DWIN_PID_TUNE
-    pidresult_t pidresult = PID_DONE;
+    tempcontrol_t pidresult = PID_DONE;
   #endif
   uint8_t Select          = 0;        // Auxiliary selector variable
   AxisEnum axis           = X_AXIS;   // Axis Select
@@ -216,7 +229,6 @@ void ParkHead();
 #endif
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   void UBLMeshTilt();
-  bool UBLValidMesh();
   void UBLMeshSave();
   void UBLMeshLoad();
 #endif
@@ -361,11 +373,19 @@ void Draw_Steps_Menu();
 #if DWIN_PID_TUNE
   #include "../../../module/temperature.h"
   void DWIN_StartM303(const bool seenC, const int c, const bool seenS, const heater_id_t hid, const celsius_t temp);
-  void DWIN_PidTuning(pidresult_t result);
+  void DWIN_PidTuning(tempcontrol_t result);
   #if ENABLED(PIDTEMP)
     void Draw_HotendPID_Menu();
   #endif
   #if ENABLED(PIDTEMPBED)
     void Draw_BedPID_Menu();
   #endif
+#endif
+
+// MPC
+#if EITHER(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU)
+  void Draw_HotendMPC_Menu();
+#endif
+#if ENABLED(MPC_AUTOTUNE)
+  void DWIN_MPCTuning(tempcontrol_t result);
 #endif

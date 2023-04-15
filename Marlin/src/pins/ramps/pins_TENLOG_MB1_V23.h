@@ -22,7 +22,8 @@
 #pragma once
 
 /**
- * Tenlog pin assignments
+ * Tenlog MB1 V2.3 pin assignments
+ * ATmega2560
  */
 
 #define REQUIRE_MEGA2560
@@ -88,30 +89,22 @@
 #define TEMP_BED_PIN                          14  // Analog Input
 
 //
-// Heaters
+// Heaters / Fans
 //
 #define HEATER_0_PIN                          11
 #define HEATER_1_PIN                          10
 #define HEATER_BED_PIN                         8
 
-//
-// Fans
-//
-#define FAN_PIN             9
-#define FAN2_PIN            5
+#define FAN0_PIN                               9
+#define FAN2_PIN                               5  // Normally this would be a servo pin
 
+//#define NUM_RUNOUT_SENSORS                   0
 #define FIL_RUNOUT_PIN                        15
 //#define FIL_RUNOUT2_PIN                     21
 
 //
 // PSU and Powerloss Recovery
 //
-#if ENABLED(MaintainedPowerSwitch)
-  //nothing
-#else
-  #define KILL_PIN 32
-  #define KILL_PIN_STATE HIGH
-#endif
 #if ENABLED(PSU_CONTROL)
   #define PS_ON_PIN                           40  // The M80/M81 PSU pin for boards v2.1-2.3
 #endif
@@ -146,7 +139,7 @@
 //#endif
 
 #define LCD_PINS_RS                           -1
-#define LCD_PINS_ENABLE                       -1
+#define LCD_PINS_EN                           -1
 #define LCD_PINS_D4                           -1
 #define LCD_PINS_D5                           -1
 #define LCD_PINS_D6                           -1

@@ -17,7 +17,8 @@
 #### MY OVERRIDES
 */
 
-#define NIX_MACHINE_NAME "RadioActiv - v0.11 [M2.1(7c3b7f2)]"
+#define NIX_MACHINE_NAME "RadioActiv - v0.02 [M2.1(xxxxxx)]"
+#undef CUSTOM_MACHINE_NAME
 #define CUSTOM_MACHINE_NAME NIX_MACHINE_NAME
 #undef TENLOG_CONFIG
 #define TENLOG_CONFIG NIX_MACHINE_NAME
@@ -50,7 +51,7 @@
 #undef Z_CLEARANCE_MULTI_PROBE
 #define Z_CLEARANCE_MULTI_PROBE     2 // Z Clearance between multiple probes
 #undef Z_CLEARANCE_MULTI_PROBE
-#define Z_PROBE_FEEDRATE_SLOW 45
+// #define Z_PROBE_FEEDRATE_SLOW 45
 
 // == /PROBING ==
 // #define LUX_HEATER_0_MAXTEMP 260

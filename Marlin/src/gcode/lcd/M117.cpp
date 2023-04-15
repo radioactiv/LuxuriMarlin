@@ -37,9 +37,6 @@ void GcodeSuite::M117() {
   else
     ui.reset_status();
 
-  PORT_REDIRECT(SerialMask::All);
-  SERIAL_ECHOLNPGM("//lux:M117 ",parser.string_arg);
-
 }
 
 #endif // HAS_STATUS_MESSAGE

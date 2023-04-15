@@ -63,7 +63,7 @@
  *       the capability is not present.
  */
 void GcodeSuite::M115() {
-  SERIAL_ECHOPGM("FIRMWARE_NAME:Luxuri for Marlin"
+  SERIAL_ECHOPGM("FIRMWARE_NAME:Marlin"
     " " DETAILED_BUILD_VERSION " (" __DATE__ " " __TIME__ ")"
     " SOURCE_CODE_URL:" SOURCE_CODE_URL
     " PROTOCOL_VERSION:" PROTOCOL_VERSION
@@ -232,7 +232,7 @@ void GcodeSuite::M115() {
       const xyz_pos_t lmin = dmin.asLogical(), lmax = dmax.asLogical(),
                       wmin = cmin.asLogical(), wmax = cmax.asLogical();
 
-      SERIAL_ECHOLNPGM(
+      SERIAL_ECHOPGM(
         "area:{"
           "full:{"
             "min:{"
@@ -249,6 +249,8 @@ void GcodeSuite::M115() {
               ),
             "}" // max
           "}," // full
+      );
+      SERIAL_ECHOLNPGM(
           "work:{"
             "min:{"
               LIST_N(DOUBLE(NUM_AXES),

@@ -49,9 +49,12 @@
 
 //Bed Endstop
 #if ENABLED(ManualBedEndstop)
-  #define LUX_Y_MIN_ENDSTOP_INVERTING false
+  // #define LUX_Y_MIN_ENDSTOP_INVERTING false //Old Way
+  #define LUX_Y_MIN_ENDSTOP_HIT_STATE HIGH //New Way
+
 #else //Optical Y
-  #define LUX_Y_MIN_ENDSTOP_INVERTING true
+  // #define LUX_Y_MIN_ENDSTOP_INVERTING true //Old Way
+  #define LUX_Y_MIN_ENDSTOP_HIT_STATE LOW  //New Way
 #endif
 
 //Power Switch Type
@@ -95,7 +98,8 @@
   #define LUX_MIN_SOFTWARE_ENDSTOP_Z 0
   #define LUX_Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN 1
   #define LUX_Z_MIN_PROBE_REPEATABILITY_TEST 1
-  #define LUX_Z_MIN_ENDSTOP_INVERTING false
+  //#define LUX_Z_MIN_ENDSTOP_INVERTING false  //Old way
+  #define LUX_Z_MIN_ENDSTOP_HIT_STATE HIGH //New Way
   #define LUX_Z_STEPPER_AUTO_ALIGN 1
   #define LUX_NOZZLE_TO_PROBE_OFFSET { 7, -47, -1.34 }
   #define LUX_PROBING_MARGIN_BACK 30
@@ -107,7 +111,8 @@
   #define LUX_MIN_SOFTWARE_ENDSTOP_Z 1
   #define LUX_USE_ZMAX_PLUG 1
   #define LUX_Z_MULTI_ENDSTOPS 1
-  #define LUX_Z_MIN_ENDSTOP_INVERTING true
+  // #define LUX_Z_MIN_ENDSTOP_INVERTING true // Old Way
+  #define LUX_Z_MIN_ENDSTOP_HIT_STATE LOW // New Way
   #define LUX_PROBING_MARGIN_BACK PROBING_MARGIN
   #define BABYSTEP_HOTEND_Z_OFFSET 1
 #endif

@@ -42,6 +42,7 @@
 #endif
 
 #include "../../LuxBuilder.h"
+#include "../../Configuration_RadioActiv.h"  // My Config entries override everything else
 #include "../../Configuration.h"
 #include "../../Configuration_RadioActiv.h"  // My Config entries override everything else
 

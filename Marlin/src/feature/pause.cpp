@@ -234,6 +234,8 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
 
   TERN_(BELTPRINTER, do_blocking_move_to_xy(0.00, 50.00));
 
+  TERN_(MPCTEMP, MPC::e_paused = true);
+
   // Slow Load filament
   if (slow_load_length) unscaled_e_move(slow_load_length, FILAMENT_CHANGE_SLOW_LOAD_FEEDRATE);
 
@@ -297,6 +299,9 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
     } while (TERN0(M600_PURGE_MORE_RESUMABLE, pause_menu_response == PAUSE_RESPONSE_EXTRUDE_MORE));
 
   #endif
+
+  TERN_(MPCTEMP, MPC::e_paused = false);
+
   TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_end());
 
   return true;
@@ -462,17 +467,17 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
   if (do_park) nozzle.park(0, park_point); // Park the nozzle by doing a Minimum Z Raise followed by an XY Move
   TERN_(DWIN_LCD_PROUI, if (!do_park) ui.set_status(GET_TEXT_F(MSG_PARK_FAILED)));
 
-  // #if ENABLED(DUAL_X_CARRIAGE)
-  //   const int8_t saved_ext        = active_extruder;
-  //   const bool saved_ext_dup_mode = extruder_duplication_enabled;
-  //   set_duplication_enabled(false, DXC_ext);
-  // #endif
+  #if ENABLED(DUAL_X_CARRIAGE)
+    const int8_t saved_ext        = active_extruder;
+    const bool saved_ext_dup_mode = extruder_duplication_enabled;
+    set_duplication_enabled(false, DXC_ext);
+  #endif
 
   // Unload the filament, if specified
   if (unload_length)
     unload_filament(unload_length, show_lcd, PAUSE_MODE_CHANGE_FILAMENT);
 
-  // TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
+  TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
 
   // Disable the Extruder for manual change
   disable_active_extruder();
@@ -494,7 +499,6 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
  */
 
 void show_continue_prompt(const bool is_reload) {
-  PORT_REDIRECT(SerialMask::All);
   DEBUG_SECTION(scp, "pause_print", true);
   DEBUG_ECHOLNPGM("... is_reload:", is_reload);
 
@@ -504,7 +508,6 @@ void show_continue_prompt(const bool is_reload) {
 }
 
 void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep_count/*=0*/ DXC_ARGS) {
-  PORT_REDIRECT(SerialMask::All);
   DEBUG_SECTION(wfc, "wait_for_confirmation", true);
   DEBUG_ECHOLNPGM("... is_reload:", is_reload, " maxbeep:", max_beep_count DXC_SAY);
 
