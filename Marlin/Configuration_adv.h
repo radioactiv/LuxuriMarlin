@@ -278,9 +278,15 @@
   #define THERMAL_PROTECTION_BOARD   // Halt the printer if the board sensor leaves the temp range below.
   #define BOARD_MINTEMP           8  // (°C)
   #define BOARD_MAXTEMP          70  // (°C)
-  #ifndef TEMP_BOARD_PIN
-    //#define TEMP_BOARD_PIN -1      // Board temp sensor pin, if not set in pins file.
+  //#define TEMP_BOARD_PIN -1        // Board temp sensor pin override.
   #endif
+
+//
+// SoC Sensor options
+//
+#if TEMP_SENSOR_SOC
+  #define THERMAL_PROTECTION_SOC     // Halt the printer if the SoC sensor leaves the temp range below.
+  #define SOC_MAXTEMP            85  // (°C)
 #endif
 
 /**
@@ -581,6 +587,9 @@
   // Use TEMP_SENSOR_BOARD as a trigger for enabling the controller fan
   //#define CONTROLLER_FAN_MIN_BOARD_TEMP 40  // (°C) Turn on the fan if the board reaches this temperature
 
+  // Use TEMP_SENSOR_SOC as a trigger for enabling the controller fan
+  //#define CONTROLLER_FAN_MIN_SOC_TEMP 40  // (°C) Turn on the fan if the SoC reaches this temperature
+
   //#define CONTROLLER_FAN_EDITABLE         // Enable M710 configurable settings
   #if ENABLED(CONTROLLER_FAN_EDITABLE)
     #define CONTROLLER_FAN_MENU             // Enable the Controller Fan submenu
@@ -842,13 +851,13 @@
  *     Get the offset by homing X and measuring the error.
  *     Also set with 'M666 X<offset>' and stored to EEPROM with 'M500'.
  *
- *   - Use X2_USE_ENDSTOP to set the endstop plug by name. (_XMIN_, _XMAX_, _YMIN_, _YMAX_, _ZMIN_, _ZMAX_)
+ *   - Define the extra endstop pins here to override defaults. No auto-assignment.
  */
 #if HAS_X2_STEPPER && DISABLED(DUAL_X_CARRIAGE)
   //#define INVERT_X2_VS_X_DIR        // X2 direction signal is the opposite of X
   //#define X_DUAL_ENDSTOPS           // X2 has its own endstop
   #if ENABLED(X_DUAL_ENDSTOPS)
-    #define X2_USE_ENDSTOP    _XMAX_  // X2 endstop board plug. Don't forget to enable USE_*_PLUG.
+    #define X2_STOP_PIN X_MAX_PIN   _XMAX_ // X2 endstop pin override
     #define X2_ENDSTOP_ADJUSTMENT  0  // X2 offset relative to X endstop
   #endif
 #endif
@@ -857,7 +866,7 @@
   //#define INVERT_Y2_VS_Y_DIR        // Y2 direction signal is the opposite of Y
   //#define Y_DUAL_ENDSTOPS           // Y2 has its own endstop
   #if ENABLED(Y_DUAL_ENDSTOPS)
-    #define Y2_USE_ENDSTOP    _YMAX_  // Y2 endstop board plug. Don't forget to enable USE_*_PLUG.
+    #define Y2_STOP_PIN Y_MAX_PIN  _YMAX_ // Y2 endstop pin override
     #define Y2_ENDSTOP_ADJUSTMENT  0  // Y2 offset relative to Y endstop
   #endif
 #endif
@@ -870,20 +879,20 @@
 
   #define Z_MULTI_ENDSTOPS LUX_Z_MULTI_ENDSTOPS         // Other Z axes have their own endstops
   #if ENABLED(Z_MULTI_ENDSTOPS)
-    #define Z2_USE_ENDSTOP   _ZMAX_   // Z2 endstop board plug. Don't forget to enable USE_*_PLUG.
+    #define Z2_STOP_PIN X_MAX_PIN _ZMAX_  // Z2 endstop pin override
     #define Z2_ENDSTOP_ADJUSTMENT 0   // Z2 offset relative to Z endstop
   #endif
   #ifdef Z3_DRIVER_TYPE
     //#define INVERT_Z3_VS_Z_DIR      // Z3 direction signal is the opposite of Z
     #if ENABLED(Z_MULTI_ENDSTOPS)
-      #define Z3_USE_ENDSTOP   _YMAX_ // Z3 endstop board plug. Don't forget to enable USE_*_PLUG.
+      #define Z3_STOP_PIN Y_MAX_PIN _YMAX_ // Z3 endstop pin override
       #define Z3_ENDSTOP_ADJUSTMENT 0 // Z3 offset relative to Z endstop
     #endif
   #endif
   #ifdef Z4_DRIVER_TYPE
     //#define INVERT_Z4_VS_Z_DIR      // Z4 direction signal is the opposite of Z
     #if ENABLED(Z_MULTI_ENDSTOPS)
-      #define Z4_USE_ENDSTOP   _ZMAX_ // Z4 endstop board plug. Don't forget to enable USE_*_PLUG.
+      #define Z4_STOP_PIN Z_MAX_PIN _ZMAX_ // Z4 endstop pin override
       #define Z4_ENDSTOP_ADJUSTMENT 0 // Z4 offset relative to Z endstop
     #endif
   #endif
@@ -917,7 +926,7 @@
 
 #define QUICK_HOME                            // If G28 contains XY do a diagonal move first
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
-//#define HOME_Z_FIRST                        // Home Z first. Requires a Z-MIN endstop (not a probe).
+//#define HOME_Z_FIRST                        // Home Z first. Requires a real endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
 
 // @section bltouch
@@ -1162,15 +1171,17 @@
  *  X<1>         Set the given parameters only for the X axis.
  *  Y<1>         Set the given parameters only for the Y axis.
  */
-#define INPUT_SHAPING_X
-#define INPUT_SHAPING_Y
+#if ENABLED(RADIOACTIV_SHAPING_ENABLED)
+  #define INPUT_SHAPING_X
+  #define INPUT_SHAPING_Y
+#endif
 #if EITHER(INPUT_SHAPING_X, INPUT_SHAPING_Y)
   #if ENABLED(INPUT_SHAPING_X)
-    #define SHAPING_FREQ_X  40          // (Hz) The default dominant resonant frequency on the X axis.
+    #define SHAPING_FREQ_X  RADIOACTIV_SHAPING_FREQ_X          // (Hz) The default dominant resonant frequency on the X axis.
     #define SHAPING_ZETA_X  0.15f       // Damping ratio of the X axis (range: 0.0 = no damping to 1.0 = critical damping).
   #endif
   #if ENABLED(INPUT_SHAPING_Y)
-    #define SHAPING_FREQ_Y  40          // (Hz) The default dominant resonant frequency on the Y axis.
+    #define SHAPING_FREQ_Y  RADIOACTIV_SHAPING_FREQ_Y          // (Hz) The default dominant resonant frequency on the Y axis.
     #define SHAPING_ZETA_Y  0.15f       // Damping ratio of the Y axis (range: 0.0 = no damping to 1.0 = critical damping).
   #endif
   //#define SHAPING_MIN_FREQ  20        // By default the minimum of the shaping frequencies. Override to affect SRAM usage.
@@ -1196,7 +1207,6 @@
 #define STEP_STATE_V HIGH
 #define STEP_STATE_W HIGH
 #define STEP_STATE_E HIGH
-
 
 /**
  * Idle Stepper Shutdown
@@ -1515,21 +1525,44 @@
   // Insert a menu for preheating at the top level to allow for quick access
   //#define PREHEAT_SHORTCUT_MENU_ITEM
 
+  // Add Configuration > Debug Menu > Endstop Test for endstop/probe/runout testing
+  //#define LCD_ENDSTOP_TEST
+
 #endif // HAS_MARLINUI_MENU
 
 #if HAS_DISPLAY
-  //#define SOUND_MENU_ITEM   // Add a mute option to the LCD menu
-  #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
-
-  // The timeout to return to the status screen from sub-menus
-  //#define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
-
+  /**
+   * *** VENDORS PLEASE READ ***
+   *
+   * Marlin allows you to add a custom boot image for Graphical LCDs.
+   * With this option Marlin will first show your custom screen followed
+   * by the standard Marlin logo with version number and web URL.
+   *
+   * We encourage you to take advantage of this new feature and we also
+   * respectfully request that you retain the unmodified Marlin boot screen.
+   */
+  #if ANY(HAS_MARLINUI_U8GLIB, TOUCH_UI_FTDI_EVE, IS_DWIN_MARLINUI)
+    #define SHOW_BOOTSCREEN                 // Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
   #if ENABLED(SHOW_BOOTSCREEN)
     #define BOOTSCREEN_TIMEOUT 4000       // (ms) Total Duration to display the boot screen(s)
     #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
       #define BOOT_MARLIN_LOGO_SMALL      // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
     #endif
+      //#define SHOW_CUSTOM_BOOTSCREEN      // Show the bitmap in Marlin/_Bootscreen.h on startup.
   #endif
+    #if HAS_MARLINUI_U8GLIB
+      #if ENABLED(SHOW_BOOTSCREEN)
+        //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
+      #endif
+      //#define CUSTOM_STATUS_SCREEN_IMAGE  // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
+    #endif
+  #endif
+
+  //#define SOUND_MENU_ITEM   // Add a mute option to the LCD menu
+  #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
+
+  // The timeout to return to the status screen from sub-menus
+  //#define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
 
   // Scroll a longer status message into view
   //#define STATUS_MESSAGE_SCROLLING
@@ -1581,13 +1614,13 @@
   #define SET_REMAINING_TIME              // Add 'R' parameter to set remaining time
   //#define SET_INTERACTION_TIME          // Add 'C' parameter to set time until next filament change or other user interaction
   //#define M73_REPORT                    // Report M73 values to host
-  #if BOTH(M73_REPORT, SDSUPPORT)
+  #if BOTH(M73_REPORT, HAS_MEDIA)
     #define M73_REPORT_SD_ONLY            // Report only when printing from SD
   #endif
 #endif
 
 // LCD Print Progress options. Multiple times may be displayed in turn.
-#if HAS_DISPLAY && EITHER(SDSUPPORT, SET_PROGRESS_MANUALLY)
+#if HAS_DISPLAY && EITHER(HAS_MEDIA, SET_PROGRESS_MANUALLY)
   #define SHOW_PROGRESS_PERCENT           // Show print progress percentage (doesn't affect progress bar)
   #define SHOW_ELAPSED_TIME               // Display elapsed printing time (prefix 'E')
   //#define SHOW_REMAINING_TIME           // Display estimated time to completion (prefix 'R')
@@ -1608,7 +1641,7 @@
   #endif
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   /**
    * SD Card SPI Speed
    * May be required to resolve "volume init" errors.
@@ -1848,7 +1881,7 @@
     #define DEFAULT_SHARED_VOLUME SV_USB_FLASH_DRIVE
   #endif
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA
 
 /**
  * By default an onboard SD card reader may be shared as a USB mass-
@@ -1933,7 +1966,6 @@
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~3260 (or ~940) bytes of flash.
 
   // Frivolous Game Options
   //#define MARLIN_BRICKOUT
@@ -2180,7 +2212,7 @@
   #define BABYSTEP_ZPROBE_OFFSET LUX_BABYSTEP_ZPROBE_OFFSET // Combine M851 Z and Babystepping
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     #define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
-    //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
+    //#define BABYSTEP_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
   #endif
 #endif
 
@@ -2473,9 +2505,9 @@
 
 // The number of linear moves that can be in the planner at once.
 // The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g., 8, 16, 32)
-#if BOTH(SDSUPPORT, DIRECT_STEPPING)
+#if BOTH(HAS_MEDIA, DIRECT_STEPPING)
   #define BLOCK_BUFFER_SIZE  8
-#elif ENABLED(SDSUPPORT)
+#elif HAS_MEDIA
   #define BLOCK_BUFFER_SIZE 16
 #else
   #define BLOCK_BUFFER_SIZE 16
@@ -2508,7 +2540,7 @@
   //#define SERIAL_XON_XOFF
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   // Enable this option to collect and display the maximum
   // RX queue usage after transferring a file to SD.
   //#define SERIAL_STATS_MAX_RX_QUEUED
@@ -2672,7 +2704,7 @@
     #define TOOLCHANGE_FS_UNRETRACT_SPEED (25*60) // (mm/min) (On SINGLENOZZLE or Bowden loading must be slowed down)
 
     // Longer prime to clean out a SINGLENOZZLE
-    #define TOOLCHANGE_FS_EXTRA_PRIME          0  // (mm) Extra priming length
+    #define TOOLCHANGE_FS_EXTRA_PRIME          5  // (mm) Extra priming length
     #define TOOLCHANGE_FS_PRIME_SPEED    (4.6*60) // (mm/min) Extra priming feedrate
     #define TOOLCHANGE_FS_WIPE_RETRACT         0  // (mm) Cutting retraction out of park, for less stringing, better wipe, etc. Adjust with LCD or M217 G.
 
@@ -3705,6 +3737,9 @@
  * Auto-report position with M154 S<seconds>
  */
 #define AUTO_REPORT_POSITION
+#if ENABLED(AUTO_REPORT_POSITION)
+  //#define AUTO_REPORT_REAL_POSITION // Auto-report the real position
+#endif
 
 /**
  * Include capabilities in M115 output
@@ -4137,6 +4172,7 @@
   #define MAX7219_DEBUG_PROFILE       6  // Display the fraction of CPU time spent in profiled code on this LED matrix
                                          // row. By default idle() is profiled so this shows how "idle" the processor is.
                                          // See class CodeProfiler.
+  //#define MAX7219_DEBUG_MULTISTEPPING 6 // Show multi-stepping 1 to 128 on this LED matrix row.
 #endif
 
 /**
